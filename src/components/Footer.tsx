@@ -21,7 +21,7 @@ export function Footer() {
             <img
                 src={logoUnifil}
                 alt="Logo do Centro Universitário Filadélfia"
-                className="w-96"
+                className="w-1/3"
             />
         </div>
     )

@@ -66,7 +66,7 @@ export function News() {
                                             <img
                                                 src={newsImage}
                                                 alt="Imagem genérica para uma notícia de saúde."
-                                                className=""
+                                                className="w-full h-full"
                                             />
 
                                             <div className="px-5 pt-3 pb-10 flex flex-col gap-3 h-full justify-between">
