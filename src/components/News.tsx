@@ -13,6 +13,7 @@ import axios from "axios"
 
 import moment from 'moment';
 import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
 
 interface NewProps {
     source: { id: string, name: string }
@@ -35,8 +36,14 @@ async function getNews() {
     return res.data
 }
 
-export async function News() {
-    const { articles } = await getNews()
+export function News() {
+    const [articles, setArticles] = useState<NewProps[]>([])
+
+    useEffect(()=>{ ( async () => { const _articles = await getNews() 
+        setArticles(_articles) 
+    })()},[])
+
+    console.log(articles)
 
     return (
         <section className="w-full pt-10 pb-20">
