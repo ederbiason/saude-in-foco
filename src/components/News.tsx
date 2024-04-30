@@ -26,22 +26,27 @@ interface NewProps {
     content: any
 }
 
-async function getNews() {
-    const res = await axios.get(`https://newsapi.org/v2/top-headlines?country=br&category=health&apiKey=${process.env.NEWS_API_KEY}`)
-
-    if (res.status != 200) {
-        throw new Error('Failed to fetch data')
-    }
-
-    return res.data
-}
-
 export function News() {
     const [articles, setArticles] = useState<NewProps[]>([])
 
-    useEffect(()=>{ ( async () => { const _articles = await getNews() 
-        setArticles(_articles) 
-    })()},[])
+    useEffect(() => {
+        async function getNews() {
+            const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY
+
+            try {
+                const res = await axios.get(`https://newsapi.org/v2/top-headlines?country=br&category=health&apiKey=${NEWS_API_KEY}`)
+
+                if (res.status !== 200) {
+                    throw new Error('Failed to fetch data');
+                }
+    
+                setArticles(res.data.articles)
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+            }
+        }
+        getNews()
+    }, [])
 
     console.log(articles)
 
