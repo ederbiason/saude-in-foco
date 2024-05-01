@@ -7,6 +7,7 @@ import { App } from '@/App'
 import { Diseases } from '@/routes/Diseases'
 import DiseaseDetail from '@/components/DiseaseDetail'
 import Diagnoses from '@/routes/Diagnoses'
+import Hospitals from '@/routes/Hospitals'
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
         path: '/diagnoses',
         element: <Diagnoses />,
       },
+      {
+        path: '/hospitals',
+        element: <Hospitals />
+      }
     ]
   }
 ])
