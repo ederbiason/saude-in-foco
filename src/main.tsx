@@ -6,6 +6,7 @@ import { Home } from '@/routes/Home'
 import { App } from '@/App'
 import { Diseases } from '@/routes/Diseases'
 import DiseaseDetail from '@/components/DiseaseDetail'
+import Diagnoses from '@/routes/Diagnoses'
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: '/diseases/:diseaseid',
         element: <DiseaseDetail />,
+      },
+      {
+        path: '/diagnoses',
+        element: <Diagnoses />,
       },
     ]
   }
