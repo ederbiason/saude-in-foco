@@ -31,7 +31,7 @@ export function News() {
 
     useEffect(() => {
         async function getNews() {
-            const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY
+            const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || "184ccd105a1443e2a521d7c9bdb58e85"
 
             try {
                 const res = await axios.get(`https://newsapi.org/v2/top-headlines?country=br&category=health&apiKey=${NEWS_API_KEY}`)
