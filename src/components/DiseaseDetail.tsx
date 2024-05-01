@@ -1,7 +1,10 @@
 import { diseases } from "@/utils/diseases"
+import { useParams } from "react-router-dom"
 
-export default function DiseaseDetail({ params }: { params: { diseaseid: string } }) {
-    const diseaseData = diseases.find(disease => disease.id === params.diseaseid)
+export default function DiseaseDetail() {
+    const { diseaseid } = useParams()
+
+    const diseaseData = diseases.find(disease => disease.id === String(diseaseid))
 
     const symptomsArray = diseaseData?.sintomas.split(';')
 
