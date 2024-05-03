@@ -8,7 +8,6 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 import { MoveRight } from "lucide-react"
-import newsImage from "@/assets/noticias.png"
 import axios from "axios"
 
 import moment from 'moment';
@@ -16,14 +15,16 @@ import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 
 interface NewProps {
-    source: { id: string, name: string }
-    author: string
     title: string
-    description: any
+    description: string
+    content: string
     url: string
-    urlToImage: any
+    image: string
     publishedAt: string
-    content: any
+    source: {
+        name: string
+        url: string
+    }
 }
 
 export function News() {
@@ -31,24 +32,25 @@ export function News() {
 
     useEffect(() => {
         async function getNews() {
-            const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || "184ccd105a1443e2a521d7c9bdb58e85"
+            const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || "b7cc753d91f6f5e58db24beed93af69e"
 
             try {
-                const res = await axios.get(`https://newsapi.org/v2/top-headlines?country=br&category=health&apiKey=${NEWS_API_KEY}`)
+                const res = await axios.get(`https://gnews.io/api/v4/top-headlines?category=health&lang=pt&country=br&max=10&apikey=${NEWS_API_KEY}`)
 
                 if (res.status !== 200) {
                     throw new Error('Failed to fetch data');
                 }
-    
+
                 setArticles(res.data.articles)
+
+
+                console.log(articles)
             } catch (error) {
                 console.error('Error fetching articles:', error);
             }
         }
         getNews()
     }, [])
-
-    console.log(articles)
 
     return (
         <section className="w-full pt-10 pb-28">
@@ -59,12 +61,12 @@ export function News() {
                     </h1>
                     <CarouselContent>
                         {articles.map((article: NewProps) => (
-                            <CarouselItem key={article.source.id} className="md:basis-1/2 lg:basis-1/3">
+                            <CarouselItem key={article.title} className="md:basis-1/2 lg:basis-1/3">
                                 <div className="p-1">
                                     <Card>
                                         <CardContent className="flex aspect-square flex-col overflow-hidden rounded-t-lg relative w-full h-96">
                                             <img
-                                                src={newsImage}
+                                                src={article.image}
                                                 alt="Imagem genérica para uma notícia de saúde."
                                                 className="w-full h-full"
                                             />
