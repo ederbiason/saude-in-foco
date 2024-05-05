@@ -2,7 +2,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { collection, addDoc, getDocs } from "firebase/firestore"
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore"
 import { db } from "@/firebase"
 
 interface VisitorProps {
@@ -20,22 +20,32 @@ export function Navbar() {
         async function visitorDetails() {
             const response = await axios.get("https://ipapi.co/json/")
             const data: VisitorProps = response.data
-            // console.log(data)
-
 
             if (localStorage.getItem("visitor") === null) {
                 localStorage.setItem("visitor", JSON.stringify(data));
             }
 
-            try {
-                await addDoc(collection(db, "visitors"), {
-                    ip: data.ip,
-                    network: data.network,
-                    city: data.city,
-                    region: data.region
-                })
-            } catch (error) {
-                console.log(error)
+            async function checkIfVisitorExists(field: string, value: string) {
+                const querySnapshot = await getDocs(query(collection(db, "visitors"), where(field, "==", value)))
+                return !querySnapshot.empty
+            }
+
+            const ipExists = await checkIfVisitorExists("ip", data.ip)
+            const networkExists = await checkIfVisitorExists("network", data.network)
+
+            if (!ipExists && !networkExists) {
+                try {
+                    await addDoc(collection(db, "visitors"), {
+                        ip: data.ip,
+                        network: data.network,
+                        city: data.city,
+                        region: data.region
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
+            } else {
+                console.log("Usuário já está na lista de visitadores.")
             }
         }
 
@@ -45,8 +55,6 @@ export function Navbar() {
     async function getVisitors() {
         const querySnapshot = await getDocs(collection(db, "visitors"));
         querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
             setVisitorCounter(prevCount => prevCount + 1)
         });
     }
