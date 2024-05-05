@@ -36,15 +36,12 @@ export function News() {
 
             try {
                 const res = await axios.get(`https://gnews.io/api/v4/top-headlines?category=health&lang=pt&country=br&max=10&apikey=${NEWS_API_KEY}`)
-
+        
                 if (res.status !== 200) {
                     throw new Error('Failed to fetch data');
                 }
 
                 setArticles(res.data.articles)
-
-
-                console.log(articles)
             } catch (error) {
                 console.error('Error fetching articles:', error);
             }

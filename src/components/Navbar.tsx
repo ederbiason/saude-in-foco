@@ -1,17 +1,59 @@
-import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
+import { collection, addDoc, getDocs } from "firebase/firestore"
+import { db } from "@/firebase"
+
+interface VisitorProps {
+    id: string
+    ip: string
+    network: string
+    city: string
+    region: string
+}
 
 export function Navbar() {
-    const [count, setCount] = useState(0);
+    const [visitorCounter, setVisitorCounter] = useState(0)
 
     useEffect(() => {
-        const visited = Cookies.get('visited');
-        if (!visited) {
-            setCount(prevCount => prevCount + 1);
-            Cookies.set('visited', 'true', { expires: 365 });
+        async function visitorDetails() {
+            const response = await axios.get("https://ipapi.co/json/")
+            const data: VisitorProps = response.data
+            // console.log(data)
+
+
+            if (localStorage.getItem("visitor") === null) {
+                localStorage.setItem("visitor", JSON.stringify(data));
+            }
+
+            try {
+                await addDoc(collection(db, "visitors"), {
+                    ip: data.ip,
+                    network: data.network,
+                    city: data.city,
+                    region: data.region
+                })
+            } catch (error) {
+                console.log(error)
+            }
         }
-    }, []);
+
+        visitorDetails()
+    }, [])
+
+    async function getVisitors() {
+        const querySnapshot = await getDocs(collection(db, "visitors"));
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            setVisitorCounter(prevCount => prevCount + 1)
+        });
+    }
+
+    useEffect(() => {
+        getVisitors()
+    }, [])
 
     return (
         <div className="w-full h-14 bg-blue-300 flex items-center px-40 justify-between">
@@ -26,7 +68,7 @@ export function Navbar() {
                     Acessos:
                 </p>
                 <p>
-                    {count}
+                    {visitorCounter}
                 </p>
             </div>
 

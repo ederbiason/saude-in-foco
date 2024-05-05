@@ -19,7 +19,7 @@ function ChangeView({ center }: MapProps) {
 }
 
 export function Map({ center }: MapProps) {
-    const [coord, setCoord] = useState<LatLngTuple>(center)
+    const [coord, setCoord] = useState<LatLngTuple>([-23.31589025216835, -51.170948489683724])
     const [hospitals, setHospitals] = useState<PlaceNode[]>([])
 
     const getMyLocation = () => {
