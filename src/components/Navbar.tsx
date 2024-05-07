@@ -54,9 +54,7 @@ export function Navbar() {
 
     async function getVisitors() {
         const querySnapshot = await getDocs(collection(db, "visitors"));
-        querySnapshot.forEach((doc) => {
-            setVisitorCounter(prevCount => prevCount + 1)
-        });
+        setVisitorCounter(querySnapshot.size)
     }
 
     useEffect(() => {
