@@ -7,9 +7,9 @@ export function Home() {
         <div className="px-40">
             <Hero />
 
-            <Services />
-
             <News />
+
+            <Services />
         </div>
     )
 }

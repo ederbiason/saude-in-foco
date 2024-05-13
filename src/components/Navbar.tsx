@@ -31,9 +31,8 @@ export function Navbar() {
             }
 
             const ipExists = await checkIfVisitorExists("ip", data.ip)
-            const networkExists = await checkIfVisitorExists("network", data.network)
 
-            if (!ipExists && !networkExists) {
+            if (!ipExists) {
                 try {
                     await addDoc(collection(db, "visitors"), {
                         ip: data.ip,
