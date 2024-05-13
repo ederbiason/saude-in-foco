@@ -3,7 +3,7 @@ import { Card } from "./Card"
 
 export function Services() {
     return (
-        <div className="flex flex-col items-center justify-center mt-14 gap-8 mb-10">
+        <div className="flex flex-col items-center justify-center gap-8 pb-28">
             <h1 className="text-3xl font-bold">
                 Nossos serviços
             </h1>
