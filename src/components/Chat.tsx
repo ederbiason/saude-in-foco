@@ -1,6 +1,7 @@
-import { ChatContainer, MainContainer, Message, MessageInput, MessageList, MessageModel, TypingIndicator } from "@chatscope/chat-ui-kit-react";
-import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { useState } from "react";
+import { ChatContainer, MainContainer, Message, MessageInput, MessageList, MessageModel, TypingIndicator } from "@chatscope/chat-ui-kit-react"
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css'
+import { useState } from "react"
+import OpenAI from "openai"
 
 const API_KEY = import.meta.env.VITE_OPENAI_API_KEY
 
@@ -25,48 +26,43 @@ export function Chat() {
         await processMessageToChatGPT(newMessages)
     }
 
+    const openai = new OpenAI({
+        baseURL: 'https://openrouter.ai/api/v1',
+        apiKey: API_KEY,
+        dangerouslyAllowBrowser: true
+    });
+    
     async function processMessageToChatGPT(chatMessages: MessageModel[]) {
-        const apiMessages = chatMessages.map((messageObject) => {
-            let role = ""
-
-            messageObject.sender === "HealthBot" ? role = "assistant" : role = "user"
-
-            return { role: role, content: messageObject.message }
+        const apiMessages: { role: "system" | "user" | "assistant"; content: string }[] = chatMessages.map((messageObject) => {
+            const role = messageObject.sender === "HealthBot" ? "assistant" : "user"
+            return { role, content: messageObject.message || "" } 
         })
-
-        const systemMessage = {
+    
+        const systemMessage: { role: "system"; content: string } = {
             role: "system",
-            content: "Escreva como se você fosse um médico, mas apenas passando orientações para o usuário. Ele te fornecerá os sintomas que esta sentindo e você precisa responder quais doenças ele possivelmente tem. Lembre sempre de orienta-lo a buscar um médico, pois você é uma inteligencia artificial apenas."
+            content: "Escreva como se você fosse um médico, mas apenas passando orientações para o usuário. Ele te fornecerá os sintomas que está sentindo e você precisa responder quais doenças ele possivelmente tem. Lembre sempre de orientá-lo a buscar um médico, pois você é uma inteligência artificial apenas."
         }
-
-        const apiRequestBody = {
-            "model": "gpt-3.5-turbo",
-            "messages": [
-                systemMessage,
-                ...apiMessages
-            ]
-        }
-
-        await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Authorization": "Bearer " + API_KEY,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(apiRequestBody)
-        }).then((data) => {
-            return data.json()
-        }).then((data) => {
-            setMessages(
-                [...chatMessages, {
-                    message: data.choices[0].message.content,
+    
+        try {
+            const completion = await openai.chat.completions.create({
+                model: "deepseek/deepseek-chat:free",
+                messages: [systemMessage, ...apiMessages]
+            })
+    
+            setMessages([
+                ...chatMessages,
+                {
+                    message: completion.choices[0].message.content || "Não consegui entender sua solicitação.",
                     sender: "HealthBot",
                     direction: 0,
                     position: 0
-                }]
-            )
+                }
+            ])
+    
             setTyping(false)
-        })
+        } catch (error) {
+            console.error("Erro ao processar a mensagem com DeepSeek:", error)
+        }
     }
 
     return (
